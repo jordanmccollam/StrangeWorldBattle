@@ -10,13 +10,6 @@ public class Orb : MonoBehaviour
     private bool activated = false;
     private bool pickedUp = false;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
     void Update()
     {
         if (activated) {
@@ -31,6 +24,7 @@ public class Orb : MonoBehaviour
                 pickedUp = true;
                 transform.parent = player.hand.transform;
                 transform.position = new Vector2(player.hand.transform.position.x + 1f, player.hand.transform.position.y + 0.5f);
+                transform.rotation = player.transform.rotation;
                 player.pickedUp = true;
             }
         }

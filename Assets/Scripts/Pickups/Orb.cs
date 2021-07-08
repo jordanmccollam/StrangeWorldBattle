@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
 
 public class Orb : MonoBehaviour
 {
@@ -8,28 +9,35 @@ public class Orb : MonoBehaviour
     public float ttl;
 
     private bool activated = false;
-    private bool pickedUp = false;
+    private GameObject equippedBy;
+    private OrbSpawner spawner;
 
-    void Update()
-    {
+    private void Start() {
+        spawner = FindObjectOfType<OrbSpawner>();
+    }
+
+    private void Update() {
         if (activated) {
             transform.Translate(Vector2.right * speed * Time.deltaTime);
         }
     }
 
     private void OnTriggerEnter2D(Collider2D other) {
-        if (other.tag == "Player" && pickedUp == false) {
-            PlayerController player = other.GetComponent<PlayerController>();
-            if (player.pickedUp == false) {
-                pickedUp = true;
-                transform.parent = player.hand.transform;
-                transform.position = new Vector2(player.hand.transform.position.x + 1f, player.hand.transform.position.y + 0.5f);
-                transform.rotation = player.transform.rotation;
-                player.pickedUp = true;
+        if (other.tag == "Player") {
+            if (!activated) {
+                PlayerController playerComp = other.GetComponent<PlayerController>();
+                if (playerComp.equipped == null) {
+                    playerComp.equipped = gameObject;
+                    equippedBy = other.gameObject;
+
+                    transform.parent = playerComp.hand;
+                    transform.position = playerComp.hand.position;
+                    transform.rotation = playerComp.hand.rotation;
+                }
+            } else if (activated && equippedBy != other.gameObject) {
+                // Deal damage to player
+                DestroyOrb();
             }
-        }
-        else if (other.tag == "Player" && pickedUp == true) {
-            // TODO: do damage to player (orb has been shot)
         }
     }
 
@@ -40,6 +48,7 @@ public class Orb : MonoBehaviour
     }
 
     private void DestroyOrb() {
+        spawner.currentlySpawned--;
         Destroy(gameObject);
     }
 }

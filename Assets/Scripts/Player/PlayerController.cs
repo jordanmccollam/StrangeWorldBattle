@@ -13,8 +13,8 @@ public class PlayerController : MonoBehaviour
     public Transform groundCheck;
     public float checkRadius;
     public LayerMask whatIsGround;
-    public GameObject hand;
-    public bool pickedUp = false;
+    public GameObject equipped;
+    public Transform hand;
 
     // COMPONENTS / PREFABS
     private PhotonView view;
@@ -82,15 +82,10 @@ public class PlayerController : MonoBehaviour
 
     private void HandleAction() {
         if (Input.GetKeyDown("joystick button 0") || Input.GetMouseButtonDown(0)) {
-            if (pickedUp) {
-                // TODO: code shooting action
-                pickedUp = false;
-                GameObject orb = GameObject.FindGameObjectWithTag("Orb");
-                orb.GetComponent<Orb>().Activate();
-
-                // TODO: Shooting sounds / animation / anything game feel
+            if (equipped != null) {
+                equipped.GetComponent<Orb>().Activate();
             } else {
-                // TODO: code some kind of misfire game feel (player isn't holding an item)
+                // Let player know they do not have item equipped (sound? screenshake?)
             }
         }
     }
